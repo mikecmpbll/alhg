@@ -22,3 +22,5 @@
 
 # Ignore carrierwave uploads
 /public/uploads
+
+/config/secrets.yml
