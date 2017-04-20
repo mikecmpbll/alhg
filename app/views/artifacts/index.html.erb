@@ -1,0 +1,40 @@
+<h1 class="siimple-h1">Artifax</h1>
+
+<%= link_to "Upload", new_artifact_path, class: 'siimple-btn siimple-btn--blue pull-right' %>
+
+<%= form_tag artifacts_path, method: :get do %>
+  <%= text_field_tag :search, params[:search], class: 'siimple-input', placeholder: "Search" %>
+<% end %>
+
+<br>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Size</th>
+      <th>Uploaded by</th>
+      <th>Uploaded at</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @artifacts.each.with_index do |artifact, i| %>
+      <tr>
+        <td><%= link_to artifact.file_identifier, artifact, class: 'siimple-link' %></td>
+        <td><%= artifact.file.size %></td>
+        <td><%= artifact.creator.email %></td>
+        <td><%= artifact.created_at %></td>
+      </tr>
+      <% if params[:search].present? %>
+        <tr class="search-result-blurb">
+          <td colspan="4">
+            <% if @results[i].try(:highlight).key? 'es_file.content' %>
+              <% @results[i].highlight['es_file.content'].each do |snippet| %>
+                <p><%= snippet.html_safe %>...</p>
+              <% end %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    <% end %>
+  </tbody>
+</table>
