@@ -33,8 +33,7 @@ table td, table th {
 /* Search */
 
 .search-highlight {
-  background-color: var(--siimple-orange-4);
-  color: #fff;
+  background-color: #fffbaf;
 }
 
 .search-result-blurb {
