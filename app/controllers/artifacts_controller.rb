@@ -2,8 +2,13 @@ class ArtifactsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @results = Artifact.search params[:search]
-    @artifacts = @results.records if @results.respond_to? :records
+    if params[:search]
+      @results = Artifact.search params[:search]
+      @artifacts = @results.records
+    else
+      @results = []
+      @artifacts = Artifact.all
+    end
   end
 
   def show
@@ -34,7 +39,10 @@ class ArtifactsController < ApplicationController
     @artifact = Artifact.find params[:id]
 
     if @artifact.update artifact_params
+      redirect_to artifacts_path,
+        notice: t('artifacts.updated', artifact: @artifact.filename)
     else
+      render :edit
     end
   end
 
@@ -42,12 +50,21 @@ class ArtifactsController < ApplicationController
     @artifact = Artifact.find params[:id]
 
     if @artifact.destroy
+      redirect_to artifacts_path,
+        notice: t('artifacts.destroyed', artifact: @artifact.filename)
     else
+      redirect_to artifact_path(@artifact),
+        alert: t('artifacts.error_destroying')
     end
   end
 
 private
   def artifact_params
-    params.require(:artifact).permit(:file, :file_cache)
+    params.require(:artifact).permit(
+      :file,
+      :file_cache,
+      :filename,
+      :description
+    )
   end
 end

@@ -12,10 +12,10 @@
     <div id="wrapper">
       <h1>Alstonefield Local History Group</h1><br>
       <% if notice %>
-        <p class="notice"><%= notice %></p>
+        <p class="alert alert-success"><%= notice %></p>
       <% end %>
       <% if alert %>
-        <p class="alert"><%= alert %></p>
+        <p class="alert alert-danger"><%= alert %></p>
       <% end %>
 
       <%= yield %>

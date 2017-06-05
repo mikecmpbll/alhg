@@ -21,3 +21,7 @@
 
 en:
   hello: "Hello world"
+  artifacts:
+    destroyed: "%{artifact} deleted."
+    error_destroying: There was an error deleting this artifact.
+    updated: "%{artifact} updated."

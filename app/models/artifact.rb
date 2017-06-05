@@ -14,6 +14,18 @@ class Artifact < ApplicationRecord
           title:         { store: true },
           date:          { store: true },
         }
+      indexes :filename
+      indexes :description
+    end
+  end
+
+  def filename
+    fn = super
+
+    if fn.present?
+      fn
+    else
+      file_identifier
     end
   end
 
@@ -26,7 +38,7 @@ class Artifact < ApplicationRecord
   end
 
   def as_indexed_json options = {}
-    to_json only: [:id], methods: :es_file
+    as_json only: [:id, :description], methods: [:es_file, :filename]
   end
 
   def self.search term
@@ -34,15 +46,18 @@ class Artifact < ApplicationRecord
     a = __elasticsearch__.search(
       {
         query: {
-          match: {
-            "es_file.content": term
+          multi_match: {
+            query: term,
+            fields: ["es_file.content", "filename", "description"]
           }
         },
         highlight: {
           pre_tags: ['<em class="search-highlight">'],
           post_tags: ['</em>'],
           fields: {
-            "es_file.content": {} 
+            "es_file.content": {},
+            filename: { number_of_fragments: 0 },
+            description: {}
           }
         }
       }

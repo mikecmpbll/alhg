@@ -10,13 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161119151918) do
+ActiveRecord::Schema.define(version: 20170605185234) do
 
   create_table "artifacts", force: :cascade do |t|
     t.string   "file"
     t.integer  "creator_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.text     "description"
+    t.string   "filename"
     t.index ["creator_id"], name: "index_artifacts_on_creator_id"
   end
 

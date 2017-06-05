@@ -14,24 +14,48 @@
       <th>Size</th>
       <th>Uploaded by</th>
       <th>Uploaded at</th>
+      <% if current_user %>
+        <% cols = 5 %>
+        <th></th>
+      <% else %>
+        <% cols = 4 %>
+      <% end %>
     </tr>
   </thead>
   <tbody>
     <% @artifacts.each do |artifact| %>
+      <% result = @results.find{ |r| r.id.to_i == artifact.id } %>
       <tr>
-        <td><%= link_to artifact.file_identifier, artifact, class: 'siimple-link' %></td>
-        <td><%= artifact.file.size %></td>
+        <td>
+          <% if result && result.highlight.key?('filename') %>
+            <%= link_to result.highlight['filename'].first.html_safe, artifact %>
+          <% else %>
+            <%= link_to artifact.filename, artifact %>
+          <% end %>
+        </td>
+        <td><%= artifact.file.size.fdiv(1024).fdiv(1024).round(2) %> MB</td>
         <td><%= artifact.creator.email %></td>
         <td><%= artifact.created_at %></td>
+        <% if current_user %>
+          <td><%= link_to "edit", edit_artifact_path(artifact) %></td>
+        <% end %>
       </tr>
-      <% if params[:search].present? %>
+      <% if result && result.highlight.key?('es_file.content') %>
         <tr class="search-result-blurb">
-          <td colspan="4">
-            <% result = @results.find{ |r| r.id.to_i == artifact.id } %>
-            <% if result.highlight.key? 'es_file.content' %>
-              <% result.highlight['es_file.content'].each do |snippet| %>
-                <p><%= snippet.html_safe %> ...</p>
-              <% end %>
+          <td colspan="<%= cols %>">
+            <h5>Content:</h5>
+            <% result.highlight['es_file.content'].each do |snippet| %>
+              <p><%= snippet.html_safe %> ...</p>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+      <% if result && result.highlight.key?('description') %>
+        <tr class="search-result-blurb">
+          <td colspan="<%= cols %>">
+            <h5>Description:</h5>
+            <% result.highlight['description'].each do |snippet| %>
+              <p><%= snippet.html_safe %> ...</p>
             <% end %>
           </td>
         </tr>
